@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Le Fondreau</title>
+    <style type="text/css">
+        body {
+            color: #5d5d5d;
+            font-family: Helvetica, Arial, sans-serif;
+        }
+
+        h1 {
+            font-size: 30px;
+            margin: auto;
+            margin-top: 50px;
+        }
+
+        .container {
+            max-width: auto;
+            margin: auto;
+        }
+		
+		.map {
+			width:100%;
+			height:100%;
+			background-color:green;
+			text-align:center;
+		}
+			</style>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/8.2.1/nouislider.min.css" rel="stylesheet">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/8.2.1/nouislider.min.js" charset="utf-8"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js" charset="utf-8"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-mousewheel/3.1.13/jquery.mousewheel.min.js"
+            charset="utf-8"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.7/raphael.min.js" charset="utf-8"></script>
+    <script src="jQuery-Mapael/js/jquery.mapael.js" charset="utf-8"></script>
+    <script src="js/maps/fondreau.js" charset="utf-8"></script>
+    <script type="text/javascript">
+        $(function () {
+            $(".mapcontainer").mapael({
+                map: {
+                    // Set the name of the map to display
+                    name: "fondreau",
+					//zoom: {
+                    //    enabled: true,
+                    //    maxLevel: 20
+                   // },
+					afterInit : function($self, paper, areas, plots, options) {
+						// After init hook is called just after the map initialization
+						
+						// Disable default behavior of mapael
+						$(window).unbind("resize.mapael");
+
+						// Add our custom behavior on resize event to set the proper dimensions to the SVG by using the paper object
+						$(window).on('resize', function () {
+							var viewportHeight = $(window).height();
+							var viewportWidth = $(window).width();
+							
+							var im_height = $.mapael.maps['fondreau'].height;
+							var im_width = $.mapael.maps['fondreau'].width;
+							
+							var v_fact = viewportHeight / $.mapael.maps['fondreau'].height ;
+							var h_fact = viewportWidth / $.mapael.maps['fondreau'].width;
+							var im_fact = Math.min(v_fact, h_fact);
+							
+							var new_height = im_height * im_fact;
+							var new_width = im_width * im_fact;
+
+							paper.setSize(new_width, new_height);	
+						}).trigger('resize');
+					}
+                },
+				// Customize some areas of the map
+                areas: {
+                    "path100": {
+                        text: {content: "In progress", attrs: {"font-size": 10}},
+                        tooltip: {content: "In progress"},
+						attrs: {
+                            fill: "#488402"
+                        }
+                        , attrsHover: {
+                            fill: "#a4e100"
+                        }
+                    },
+                    "path98": {
+						text: {content: "Dano", attrs: {"font-size": 10}},
+                        tooltip: {content: "Dano"},
+                        attrs: {
+                            fill: "#488402"
+                        }
+                        , attrsHover: {
+                            fill: "#a4e100"
+                        }
+                    }
+					,
+                    "path94": {
+						text: {content: "Dorskamp", attrs: {"font-size": 10}},
+                        tooltip: {content: "Dano"},
+                        attrs: {
+                            fill: "#488402"
+                        }
+                        , attrsHover: {
+                            fill: "#a4e100"
+                        }
+                    }
+                },
+            });
+        });
+    </script>
+
+</head>
+
+<body>
+<div class="container">
+    <div class="mapcontainer">
+        <div class="map">
+            <span>Alternative content for the map</span>
+        </div>
+    </div>
+</div>
+
+
+</body>
+</html>

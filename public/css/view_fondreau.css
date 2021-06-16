@@ -1,0 +1,51 @@
+
+html, body {
+    margin: 0;
+    height: 100%;
+	color: white;
+}
+
+body {
+	background-color: #333;
+	#color: #5d5d5d;
+	font-family: Helvetica, Arial, sans-serif;
+}
+
+.main_table {
+	width: 100%;
+	height: 100%;
+	border: none;
+	border-collapse: collapse;
+	border-spacing: 0px;
+}
+
+ .container { 
+	 width: 100%;
+	 height: 100%;
+	 #margin:0;
+	 text-align:center; 
+ } 
+ 
+ .mapcontainer{ 
+	width: 100%;
+	height: 100%;
+ } 
+
+ .map{ 
+	width: 100%;
+	height: 100%;
+ } 
+
+.mapael .mapTooltip {
+	position: absolute;
+	background-color: #fff;
+	moz-opacity: 0.70;
+	opacity: 0.90;
+	filter: alpha(opacity=90);
+	border-radius: 10px;
+	padding: 10px;
+	z-index: 1000;
+	max-width: 500px;
+	display: none;
+	color: #343434;
+}

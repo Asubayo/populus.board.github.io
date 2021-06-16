@@ -1,0 +1,43 @@
+body {
+	background-color: #333;
+	#color: #5d5d5d;
+	font-family: Helvetica, Arial, sans-serif;
+}
+
+ .container { 
+	 #width: 50%;
+	 #margin:0;
+	 text-align:center; 
+ } 
+ 
+ .mapcontainer { 
+	 #width: 500px;
+	 #margin: auto; 
+ } 
+
+ .map { 
+	/* width:50%; */
+	/* #height:100%; */
+	/* background-color:#F0FFFF; */
+	/* #background-image:url("../satellite_view_fondreau.jpg"); */
+	 #text-align:center; 
+ } 
+
+.mapael .mapTooltip {
+	position: absolute;
+	background-color: #fff;
+	moz-opacity: 0.00;
+	opacity: 0.90;
+	filter: alpha(opacity=90);
+	border-radius: 10px;
+	padding: 10px;
+	z-index: 1000;
+	max-width: 200px;
+	display: none;
+	color: #343434;
+}
+
+.details {
+	#background-color: #FFA500;
+	font-weight: bold;
+}

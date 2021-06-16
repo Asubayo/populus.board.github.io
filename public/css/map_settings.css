@@ -1,0 +1,8 @@
+.knobContainer {
+	text-align: center;
+	margin: 10px;
+}
+
+.knobContainer canvas {
+	cursor: pointer;
+}

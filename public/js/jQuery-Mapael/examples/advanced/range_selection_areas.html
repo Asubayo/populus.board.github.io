@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+
+    <style type="text/css">
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+        }
+
+        .slider {
+            margin: 20px 20px 60px 20px;
+        }
+
+    </style>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/8.2.1/nouislider.min.css" rel="stylesheet">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/8.2.1/nouislider.min.js" charset="utf-8"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js" charset="utf-8"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-mousewheel/3.1.13/jquery.mousewheel.min.js"
+            charset="utf-8"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.7/raphael.min.js" charset="utf-8"></script>
+    <script src="../../js/jquery.mapael.js" charset="utf-8"></script>
+    <script src="../../js/maps/france_departments.js" charset="utf-8"></script>
+    <script src="../../js/maps/world_countries.js" charset="utf-8"></script>
+    <script src="../../js/maps/usa_states.js" charset="utf-8"></script>
+
+    <script type="text/javascript">
+        $(function () {
+            
+            slider = noUiSlider.create($(".slider")[0], {
+                start: [0, 3000000],
+                step: 100000,
+                connect: true,
+                orientation: 'horizontal',
+                range: {
+                    'min': 0,
+                    'max': 3000000
+                },
+                pips: {
+                    mode: 'range',
+                    density: 2
+                }
+            });
+
+            slider.on('set', function(values){
+                var opt = {
+                    animDuration: 500,
+                    hiddenOpacity: 0.1,
+                    ranges: {
+                        area: {
+                            min: parseInt(values[0]),
+                            max: parseInt(values[1])
+                        }
+                    }
+                };
+                $(".mapcontainer").trigger("showElementsInRange", [opt]);
+                $(".values").text("Show area with a population between " + parseInt(values[0]) + " and " + parseInt(values[1]) + " inhabitants");
+            });
+
+            $(slider).trigger("set");
+
+        });
+    </script>
+
+</head>
+
+<body>
+<div class="container">
+
+    <div class="slider">
+    </div>
+
+    <p class="values"></p>
+
+</div>
+
+
+</body>
+</html>
