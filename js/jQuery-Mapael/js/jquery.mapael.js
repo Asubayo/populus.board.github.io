@@ -2802,10 +2802,12 @@
 
     // Extend jQuery with Mapael
     if ($[pluginName] === undefined) $[pluginName] = Mapael;
-
+	console.log($[pluginName]);
     // Add jQuery DOM function
     $.fn[pluginName] = function (options) {
         // Call Mapael on each element
+		console.log(this);
+		
         return this.each(function () {
             // Avoid leaking problem on multiple instanciation by removing an old mapael object on a container
             if ($.data(this, pluginName)) {
@@ -2813,6 +2815,9 @@
             }
             // Create Mapael and save it as jQuery data
             // This allow external access to Mapael using $(".mapcontainer").data("mapael")
+			
+			console.log(options);
+			
             $.data(this, pluginName, new Mapael(this, options));
         });
     };

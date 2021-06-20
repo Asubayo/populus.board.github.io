@@ -1,0 +1,533 @@
+﻿<!doctype html>
+<html>
+<link rel="stylesheet" href="css/view_template.css">
+
+
+<head>
+    <meta charset="utf-8" />
+    <!--<link rel="stylesheet" href="Contenu/style.css" />-->
+    <title>Poplars</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-mousewheel/3.1.13/jquery.mousewheel.min.js" charset="utf-8"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js" charset="utf-8"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.7/raphael.min.js" charset="utf-8"></script>
+
+    <script src="js/Chart.js/dist/Chart.min.js"></script>
+    <script src="js/Chart.js/samples/utils.js"></script>
+    <script src="js/jQuery-Mapael/js/jquery.mapael.js" charset="utf-8"></script>
+    <script src="js/maps/fondreau.js" charset="utf-8"></script>
+    <script src="js/maps/map_simonniere_pond.js" charset="utf-8"></script>
+    <script src="js/maps/map_dorskamp.js" charset="utf-8"></script>
+</head>
+<body>
+    
+    <div id="RootContent"/>
+
+</body>
+
+<script>
+
+
+    class Model
+    {
+        // Will manipulate the json data stored on github
+        constructor() { }
+    }
+
+    class ViewMain
+    {
+        constructor(route, stop) {
+
+            // The root element
+            this.root = document.getElementById('RootContent')
+            
+            // Create menu with tabs
+            const divTabs = document.createElement('div');
+            divTabs.className = 'tab';
+            this.root.appendChild(divTabs);
+
+            const btnTab1 = document.createElement('button');
+            console.log(btnTab1);
+            btnTab1.id = 'defaultOpen';
+            btnTab1.className = 'tablinks';
+            btnTab1.textContent = "Home";
+            divTabs.appendChild(btnTab1);
+
+            const btnTab2 = document.createElement('button');
+            btnTab2.textContent = "Etang";
+            btnTab2.className = 'tablinks';
+            divTabs.appendChild(btnTab2);
+
+            const btnTab3 = document.createElement('button');
+            btnTab3.textContent = "Fondreau";
+            btnTab3.className = 'tablinks';
+            divTabs.appendChild(btnTab3);
+                        
+
+            const divTab1 = document.createElement('div');
+            divTab1.id = "Home";
+            divTab1.className = 'tabcontent';
+            this.root.appendChild(divTab1);
+
+            const divTab2 = document.createElement('div');
+            divTab2.id = "Etang";
+            divTab2.className = 'tabcontent';
+            this.root.appendChild(divTab2);
+
+            const divTab3 = document.createElement('div');
+            divTab3.id = "Fondreau";
+            divTab3.className = 'tabcontent';
+            this.root.appendChild(divTab3);
+
+            // Add listners
+            btnTab1.addEventListener('click', event => {
+                console.log(event.currentTarget);
+                window.location.href = "index.html?route=home";
+            })
+
+            btnTab2.addEventListener('click', event => {
+                window.location.href = "index.html?route=pond";
+            })
+
+            btnTab3.addEventListener('click', event => {
+                window.location.href = "index.html?route=fondreau";
+            })
+
+            this.tabViews = [];
+            this.tabViews.push(new ViewHome());
+            this.tabViews.push(new ViewPond());
+
+            if (stop == "")
+            {
+                this.tabViews.push(new ViewFondreau("fondreau"));
+            }
+            
+            if (route == "fondreau" && stop != "")
+            {
+                this.tabViews.push(new ViewFondreau(stop));
+                this.openTab("Fondreau");
+            }
+
+            else if (route == "")
+            {
+                this.openTab("Home");
+            }
+            else if (route != "" && stop == "")
+            {
+                if (route == "home") {
+                    this.openTab("Home");
+                }
+                
+                if (route == "pond") {
+                    this.openTab("Etang");
+                }
+
+                if (route == "fondreau") {
+                    this.openTab("Fondreau");
+                }
+            }
+        }
+
+        openTab(tabName) {
+
+            // Declare all variables
+            var i, tabcontent, tablinks;
+
+            // Get all elements with class="tabcontent" and hide them
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+
+            // Get all elements with class="tablinks" and remove the class "active"
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+
+            // Show the current tab, and add an "active" class to the button that opened the tab
+            document.getElementById(tabName).style.display = "block";
+            document.getElementById(tabName).className += " active";
+
+            var arrayLength = this.tabViews.length;
+            for (var i = 0; i < arrayLength; i++) {
+              
+                if (this.tabViews[i].name == tabName)
+                {
+                    this.currentView = this.tabViews[i];
+                }
+            }
+        }
+    }
+
+    class ViewHome
+    {
+        constructor()
+        {
+            this.name = "Home";
+            // The root element
+            this.app = document.getElementById('Home')
+
+
+            const h = document.createElement('h3')
+            h.textContent = "Home";
+            this.app.appendChild(h);
+            const p = document.createElement('p');
+            p.textContent = 'London is the capital city of England.';
+            this.app.appendChild(p);
+        }
+    }
+
+    class ViewPond
+    {
+        constructor()
+        {
+            this.name = "Etang";
+
+            // The root element
+            this.app = document.getElementById('Etang')
+
+            const divMapContainer = document.createElement('div');
+            divMapContainer.className = 'mapcontent';
+            const divMap = document.createElement('div');
+            divMap.className = 'map';
+            divMapContainer.appendChild(divMap);
+            this.app.appendChild(divMapContainer);
+
+            const divChart = document.createElement('div');
+            divChart.className = 'chartcontent';
+            this.app.appendChild(divChart);
+
+            const divData = document.createElement('div');
+            divData.className = 'datacontent';
+            this.app.appendChild(divData);
+
+            this.previousClickedArea;;
+
+            this.defaultAreaColorFill = "#00ff00";
+            this.areaUnderSelectionColorFill = "#ff0000";
+
+            this.createMap();
+        }
+
+        createMap() {
+            $.mapael.prototype.isRaphaelBBoxBugPresent = function () { return false; };
+
+            $("#Etang .mapcontent").mapael({
+                map: {
+                    // Set the name of the map to display
+                    name: "map_simonniere_pond",
+
+                    afterInit: function ($self, paper, areas, plots, options) {
+                        // After init hook is called just after the map initialization
+
+                        // Disable default behavior of mapael
+                        $(window).unbind("resize.mapael");
+
+                        // Add our custom behavior on resize event to set the proper dimensions to the SVG by using the paper object
+                        $(window).on('resize', function () {
+
+                            var w = window.innerWidth
+                                    || document.documentElement.clientWidth
+                                    || document.body.clientWidth;
+
+                            var h = window.innerHeight
+                                    || document.documentElement.clientHeight
+                                    || document.body.clientHeight;
+                            console.log(document.getElementsByClassName("tabtr"));
+                            var viewportHeight = $(window).height() - 150;
+                            var viewportWidth = $(window).width();
+
+                            var im_height = $.mapael.maps['map_simonniere_pond'].height;
+                            var im_width = $.mapael.maps['map_simonniere_pond'].width;
+
+                            var v_fact = viewportHeight / $.mapael.maps['map_simonniere_pond'].height;
+                            var h_fact = viewportWidth / $.mapael.maps['map_simonniere_pond'].width;
+                            var im_fact = Math.min(v_fact, h_fact);
+
+                            var new_height = im_height * im_fact;
+                            var new_width = im_width * im_fact;
+
+                            paper.setSize(new_width, new_height);
+
+                        }).trigger('resize');
+                    },
+                    beforeDrawMapAreas: function ($self, paper, options) {
+                        var im_height = $.mapael.maps['map_simonniere_pond'].height;
+                        var im_width = $.mapael.maps['map_simonniere_pond'].width;
+                        //paper.image("satellite_view_fondreau.jpg", 0, 0, im_width, im_height);
+                    },
+                    defaultArea: {
+                        attrs: {
+                            fill: this.defaultAreaColorFill,
+                            stroke: "#99c7ff",
+                            cursor: "pointer"
+                        },
+                        attrsHover: {
+                            animDuration: 0
+                        },
+                        text: {
+                            attrs: {
+                                cursor: "pointer",
+                                "font-size": 10,
+                                fill: "#000"
+                            },
+                            attrsHover: {
+                                animDuration: 0
+                            }
+                        },
+                        eventHandlers: {
+                            click: function (e, id, mapElem, textElem) {
+                                
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    class ViewFondreau
+    {
+        constructor(name)
+        {
+            this.name = name;
+
+            // The root element
+            this.app = document.getElementById("Fondreau")
+
+            const h = document.createElement('h3')
+            h.textContent = "Welcome to the FONDREAU";
+            this.app.appendChild(h);
+
+            const divMapContainer = document.createElement('div');
+            divMapContainer.className = 'mapcontent';
+            const divMap = document.createElement('div');
+            divMap.className = 'map';
+            divMapContainer.appendChild(divMap);
+            this.app.appendChild(divMapContainer);
+
+            const divChart = document.createElement('div');
+            divChart.className = 'chartcontent';
+            this.app.appendChild(divChart);
+
+            const divData = document.createElement('div');
+            divData.className = 'datacontent';
+            this.app.appendChild(divData);
+
+            this.previousClickedArea;;
+
+            this.defaultAreaColorFill = "#00ff00";
+            this.areaUnderSelectionColorFill = "#ff0000";
+
+            var n = name == "fondreau" ? "fondreau" : name;
+
+            this.createMap(n);
+        }
+
+        createMap(mapName)
+        {
+            console.log("MAP NAME: " + mapName);
+
+            $.mapael.prototype.isRaphaelBBoxBugPresent = function () { return false; };
+
+            $("#Fondreau .mapcontent").mapael({
+                map: {
+                    // Set the name of the map to display
+                    name: mapName,
+
+                    afterInit: function ($self, paper, areas, plots, options) {
+                        // After init hook is called just after the map initialization
+
+                        // Disable default behavior of mapael
+                        $(window).unbind("resize.mapael");
+
+                        // Add our custom behavior on resize event to set the proper dimensions to the SVG by using the paper object
+                        $(window).on('resize', function () {
+
+                            var w = window.innerWidth
+                                    || document.documentElement.clientWidth
+                                    || document.body.clientWidth;
+
+                            var h = window.innerHeight
+                                    || document.documentElement.clientHeight
+                                    || document.body.clientHeight;
+               
+                            var viewportHeight = $(window).height() - 150;
+                            var viewportWidth = $(window).width();
+                
+                            var im_height = $.mapael.maps[mapName].height;
+                            var im_width = $.mapael.maps[mapName].width;
+
+                            var v_fact = viewportHeight / $.mapael.maps[mapName].height;
+                            var h_fact = viewportWidth / $.mapael.maps[mapName].width;
+                            var im_fact = Math.min(v_fact, h_fact);
+
+                            var new_height = im_height * im_fact;
+                            var new_width = im_width * im_fact;
+
+                            paper.setSize(new_width, new_height);
+
+                        }).trigger('resize');
+                    },
+                    beforeDrawMapAreas: function ($self, paper, options) {
+                        var im_height = $.mapael.maps[mapName].height;
+                        var im_width = $.mapael.maps[mapName].width;
+                        //paper.image("satellite_view_fondreau.jpg", 0, 0, im_width, im_height);
+                    },
+                    defaultArea: {
+                        attrs: {
+                            fill: this.defaultAreaColorFill,
+                            stroke: "#99c7ff",
+                            cursor: "pointer"
+                        },
+                        attrsHover: {
+                            animDuration: 0
+                        },
+                        text: {
+                            attrs: {
+                                cursor: "pointer",
+                                "font-size": 10,
+                                fill: "#000"
+                            },
+                            attrsHover: {
+                                animDuration: 0
+                            }
+                        },
+                        eventHandlers: {
+                            click: function (e, id, mapElem, textElem, c) {
+                                if ("path94" == id) { // Dorskamp
+                                    window.location.href = "index.html?route=fondreau&stop=map_dorskamp";
+                                }
+                                else if ("path98" == id) { // Dano
+                                    window.location.href = "index.html?route=fondreau&stop=dano";
+                                }
+                                else if ("path100" == id) { // Banchereau
+                                    window.location.href = "index.html?route=fondreau&stop=banchereau";
+                                }
+                            }
+                        }
+                    }
+                },
+                // Customize some areas of the map
+                areas: {
+                    "path104": {
+                        attrs: {
+                            fill: "none",
+                            opacity: 80
+                        }
+                        , attrsHover: {
+                            fill: "none"
+                        }
+                        ,
+                        tooltip: {
+                            content: "<span style=\"font-weight:bold;\">tet<\/span>"
+                        }
+                    },
+                    "path100": {
+                        tooltip: {
+                            content: "<span style=\"font-weight:bold;\">2300m²<\/span>"
+                        }
+                    },
+                    "path98": {
+                        tooltip: {
+                            content: "<span style=\"font-weight:bold;\"> Peupliers Dano <br/> 5400m²<\/span>"
+                        }
+                    },
+                    "path94": {
+                        tooltip: {
+                            content: "<span style=\"font-weight:bold;\"> Peupliers Dorskamp <br/> ~14700m²<\/span>"
+                        }
+                    },
+                    "path102": {
+                        attrs: {
+                            fill: "none",
+                            opacity: 80
+                        }
+                        , attrsHover: {
+                            fill: "none"
+                        }
+                    },
+                    "path86": {
+                        attrs: {
+                            fill: "none",
+                            opacity: 80
+                        }
+                        , attrsHover: {
+                            fill: "none"
+                        }
+                    },
+                    "path88": {
+                        attrs: {
+                            fill: "#e8ebed"
+                        }
+                        , attrsHover: {
+                            fill: "#e8ebed"
+                        }
+                    },
+                    "path90": {
+                        attrs: {
+                            fill: "none",
+                            opacity: 80
+                        }
+                        , attrsHover: {
+                            fill: "none"
+                        }
+                    },
+                    "path92": {
+                        attrs: {
+                            fill: "#b07447"
+                        }
+                        , attrsHover: {
+                            fill: "#b07447"
+                        }
+                    },
+                    "path96": {
+                        attrs: {
+                            fill: "none",
+                            opacity: 80
+                        }
+                        , attrsHover: {
+                            fill: "none"
+                        }
+                    },
+                },
+            });
+        }
+
+        createField(name)
+        {
+            $("#Fondreau .mapcontainer").data("mapael").destroy();
+            createMap(name);
+        }
+    }
+
+    class Controller
+    {
+        constructor(model, view) {
+            this.model = model
+            this.view = view
+        }
+
+        onTabChanged(evt, tabName)
+        {
+            this.view.onViewChanged(tabName);
+        }
+    }
+
+    var urlData = window.location.search.substring(1);
+
+    var routeStr = "route=";
+    var routeSearch = urlData.search(routeStr);
+    var routeRes = routeSearch != -1 ? urlData.substr(routeSearch + routeStr.length) : "";
+    var filterRouteRes = routeRes.split("&");
+
+    var routeStopStr = "stop=";
+    var routeStopSearch = urlData.search(routeStopStr);
+    var routeStopRes = routeStopSearch != -1 ? urlData.substr(routeStopSearch + routeStopStr.length) : "";
+
+    const app = new Controller(new Model(), new ViewMain(filterRouteRes[0], routeStopRes))
+
+</script>
+
+
+</html>
