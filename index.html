@@ -26,7 +26,6 @@
 
 <script>
 
-
     class Model
     {
         // Will manipulate the json data stored on github
@@ -37,98 +36,79 @@
     {
         constructor(route, stop) {
 
+            this.tabNames = ["Home", "Etang", "Fondreau"];
+            this.createTabs();
+            this.createView(route, stop);
+            this.displayTabContent();
+        }
+
+        createTabs() {
+
             // The root element
             this.root = document.getElementById('RootContent')
-            
+
             // Create menu with tabs
             const divTabs = document.createElement('div');
             divTabs.className = 'tab';
             this.root.appendChild(divTabs);
 
-            const btnTab1 = document.createElement('button');
-            console.log(btnTab1);
-            btnTab1.id = 'defaultOpen';
-            btnTab1.className = 'tablinks';
-            btnTab1.textContent = "Home";
-            divTabs.appendChild(btnTab1);
-
-            const btnTab2 = document.createElement('button');
-            btnTab2.textContent = "Etang";
-            btnTab2.className = 'tablinks';
-            divTabs.appendChild(btnTab2);
-
-            const btnTab3 = document.createElement('button');
-            btnTab3.textContent = "Fondreau";
-            btnTab3.className = 'tablinks';
-            divTabs.appendChild(btnTab3);
-                        
-
-            const divTab1 = document.createElement('div');
-            divTab1.id = "Home";
-            divTab1.className = 'tabcontent';
-            this.root.appendChild(divTab1);
-
-            const divTab2 = document.createElement('div');
-            divTab2.id = "Etang";
-            divTab2.className = 'tabcontent';
-            this.root.appendChild(divTab2);
-
-            const divTab3 = document.createElement('div');
-            divTab3.id = "Fondreau";
-            divTab3.className = 'tabcontent';
-            this.root.appendChild(divTab3);
-
-            // Add listners
-            btnTab1.addEventListener('click', event => {
-                console.log(event.currentTarget);
-                window.location.href = "index.html?route=home";
-            })
-
-            btnTab2.addEventListener('click', event => {
-                window.location.href = "index.html?route=pond";
-            })
-
-            btnTab3.addEventListener('click', event => {
-                window.location.href = "index.html?route=fondreau";
-            })
-
-            this.tabViews = [];
-            this.tabViews.push(new ViewHome());
-            this.tabViews.push(new ViewPond());
-
-            if (stop == "")
+            for(var i = 0; i < this.tabNames.length; i++)
             {
-                this.tabViews.push(new ViewFondreau("fondreau"));
-            }
-            
-            if (route == "fondreau" && stop != "")
-            {
-                this.tabViews.push(new ViewFondreau(stop));
-                this.openTab("Fondreau");
-            }
+                const btnTab = document.createElement('button');
+                btnTab.className = 'tablinks';
+                btnTab.textContent = this.tabNames[i];
+                divTabs.appendChild(btnTab);
 
-            else if (route == "")
-            {
-                this.openTab("Home");
-            }
-            else if (route != "" && stop == "")
-            {
-                if (route == "home") {
-                    this.openTab("Home");
-                }
-                
-                if (route == "pond") {
-                    this.openTab("Etang");
-                }
+                const divTab = document.createElement('div');
+                divTab.id = this.tabNames[i];
+                divTab.className = 'tabcontent';
+                this.root.appendChild(divTab);
 
-                if (route == "fondreau") {
-                    this.openTab("Fondreau");
-                }
+                // Add listners
+                (function (tabName) {
+                    btnTab.addEventListener('click', event => {
+                        window.location.href = "index.html?route=" + tabName.toLowerCase();
+                    })
+                }(this.tabNames[i])); // immediate invocation
             }
         }
 
-        openTab(tabName) {
+        selectTabFromRoute(route)
+        {
+            var tabName = "Home";
+            
+            if (route != "") {
 
+                tabName = route.charAt(0).toUpperCase() + route.slice(1);
+            }
+
+            return tabName;
+        }
+
+        createView(route, view) {
+            var tabName = this.selectTabFromRoute(route);
+
+            if (tabName == "Fondreau" && view == "") {
+                this.currentTabView = new ViewFondreau("fondreau");
+            }
+
+            if (tabName == "Fondreau" && view != "") {
+                this.currentTabView = new ViewFondreau(view);
+            }
+
+            if (tabName == "Etang") {
+                this.currentTabView = new ViewPond();
+            }
+
+            if (tabName == "Home") {
+                this.currentTabView = new ViewHome();
+            }
+        }
+
+        displayTabContent() {
+ 
+            var tabName = this.currentTabView.name;
+                        
             // Declare all variables
             var i, tabcontent, tablinks;
 
@@ -147,15 +127,6 @@
             // Show the current tab, and add an "active" class to the button that opened the tab
             document.getElementById(tabName).style.display = "block";
             document.getElementById(tabName).className += " active";
-
-            var arrayLength = this.tabViews.length;
-            for (var i = 0; i < arrayLength; i++) {
-              
-                if (this.tabViews[i].name == tabName)
-                {
-                    this.currentView = this.tabViews[i];
-                }
-            }
         }
     }
 
@@ -290,7 +261,7 @@
     {
         constructor(name)
         {
-            this.name = name;
+            this.name = "Fondreau";
 
             // The root element
             this.app = document.getElementById("Fondreau")
@@ -319,15 +290,11 @@
             this.defaultAreaColorFill = "#00ff00";
             this.areaUnderSelectionColorFill = "#ff0000";
 
-            var n = name == "fondreau" ? "fondreau" : name;
-
-            this.createMap(n);
+            this.createMap(name);
         }
 
         createMap(mapName)
         {
-            console.log("MAP NAME: " + mapName);
-
             $.mapael.prototype.isRaphaelBBoxBugPresent = function () { return false; };
 
             $("#Fondreau .mapcontent").mapael({
@@ -492,12 +459,6 @@
                     },
                 },
             });
-        }
-
-        createField(name)
-        {
-            $("#Fondreau .mapcontainer").data("mapael").destroy();
-            createMap(name);
         }
     }
 
