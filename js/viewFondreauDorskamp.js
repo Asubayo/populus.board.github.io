@@ -732,30 +732,47 @@ class ViewFondreauDorskamp
     {
         const divDataContainer = document.createElement('div');
         divDataContainer.className = 'data_container';
-
-        const title2 = document.createElement('h1')
-        title2.textContent = 'Data'
-        divDataContainer.appendChild(title2);
         
+        var dcTable = document.createElement("table");
+        dcTable.style.width = '100%';
+        dcTable.style.height = '100%';
+        //dcTable.setAttribute('border', '1');
         
+        var dcTableBody = document.createElement("tbody");
+        
+        var toolbarRow = document.createElement("tr");
+        var toolbarCell = document.createElement("td");
+        
+        const toobarContainer = document.createElement('div');
+        toobarContainer.className = 'toolbar_container';
+        
+        // Tool button to get a list of all data in the data container
         var allDataList = document.createElement("button");
         allDataList.innerHTML = "All data";
-        divDataContainer.appendChild(allDataList);
-        divDataContainer.style.height = "100%";
+        toobarContainer.appendChild(allDataList);
+        toolbarCell.appendChild(toobarContainer);
+        toolbarRow.appendChild(toolbarCell);
+        dcTableBody.appendChild(toolbarRow);
         
         allDataList.addEventListener('click', function() {
             var dataContentDiv = document.getElementsByClassName("data_content")[0];
             dataContentDiv.innerHTML = "";
         });
         
+        var dataRow = document.createElement("tr");
+        var dataCell = document.createElement("td");
+        
         const divData = document.createElement('div');
         divData.className = 'data_content';
+        dataCell.appendChild(divData);
+        dataRow.appendChild(dataCell);
+        dcTableBody.appendChild(dataRow);
         
         var h = window.innerHeight
                     || document.documentElement.clientHeight
                     || document.body.clientHeight;
         
-        divData.style.height = h - 200 + "px";
+        //divData.style.height = h - 200 + "px";
         
         document.addEventListener('SelectPopulusFromMap', function (e) { 
             console.log(e.detail);
@@ -769,16 +786,13 @@ class ViewFondreauDorskamp
 
             var tableBody = document.createElement("tbody");
              
-             
             function isArray(what) {
                 return Object.prototype.toString.call(what) === '[object Array]';
             } 
            
             //for(var i = 0; i < Object.keys(jsonData).length; i++)
             for(var key in jsonData) {
-                
-                 
-                
+
                  if(isArray(jsonData[key]))
                  {
                      var row = document.createElement("tr");
@@ -790,16 +804,28 @@ class ViewFondreauDorskamp
                      var row2 = document.createElement("tr");
                      var cell1 = document.createElement("td");
                      cell1.colSpan = "2";
+                     row2.style.width = '100%';
                      row2.appendChild(cell1);
                      tableBody.appendChild(row2);
                      
                      
                      var t = document.createElement("table");
-                     t.style.width = '100%';
+                    // t.style.width = '50%';
+                     t.style.height = "500px";
                      t.setAttribute('border', '1');
+                    // t.setAttribute('display', 'block');
+                     //t.setAttribute('style', 'overflow:scroll;');
                      var tb = document.createElement("tbody");
+                     tb.style.width = '100%';
+                     tb.setAttribute('display', 'block');
+                     t.setAttribute('display', 'block');
+                     t.style.display = "block";
+                     t.style.overflow = "auto";
+                     //t.setAttribute('style', 'overflow-y:scroll');
+                     //t.setAttribute('style', 'verflow-x:hidden');
+                     //tb.style.width = '100%';
                      var r = document.createElement("tr");
-                     
+                     r.style.width = '100%';
                      
                      if(jsonData[key].length > 0) {
                          
@@ -819,6 +845,11 @@ class ViewFondreauDorskamp
                          {
                              var c = document.createElement("td");
                              c.innerHTML = jsonData[key][i][k];
+                             if(k == "comment")
+                             {
+                                c.style.width = '100%';
+                             }
+                              rNext.style.width = '100%';
                              rNext.appendChild(c);
                          }
                          tb.appendChild(rNext);
@@ -835,7 +866,8 @@ class ViewFondreauDorskamp
                      var row = document.createElement("tr");
                      var cell0 = document.createElement("td");
                      var cell1 = document.createElement("td");
-                    
+                     cell0.style.width = "50%";
+                     cell1.style.width = "50%";
                      cell0.innerHTML = key;
                      cell1.innerHTML = jsonData[key];
                     
@@ -853,8 +885,22 @@ class ViewFondreauDorskamp
 
 
         }, false);
+        //divData.style.height = "50%";
+        //divDataContainer.appendChild(divData);
         
-        divDataContainer.appendChild(divData);
+        const divMediaContainer = document.createElement('div');
+        divMediaContainer.className = 'media_container';
+        //divMediaContainer.style.height = "25%";
+        
+        var mediaRow = document.createElement("tr");
+        var mediaCell = document.createElement("td");
+        mediaCell.appendChild(divMediaContainer);
+        mediaRow.style.height = "150px";
+        mediaRow.appendChild(mediaCell);
+        dcTableBody.appendChild(mediaRow);
+        dcTable.appendChild(dcTableBody);
+        divDataContainer.appendChild(dcTable);
+        //divDataContainer.appendChild(divMediaContainer);
         
         return divDataContainer;
         //this.app.appendChild(divData);
